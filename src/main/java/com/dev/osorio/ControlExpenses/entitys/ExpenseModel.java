@@ -1,5 +1,6 @@
 package com.dev.osorio.ControlExpenses.entitys;
 
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -13,13 +14,19 @@ public class ExpenseModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private BigDecimal value;
 
+    @Column(nullable = false)
     private String category;
 
+    @Column(nullable = false)
     private LocalDateTime dateTime;
+
+    public ExpenseModel() {}
 
     public ExpenseModel(String name, BigDecimal value, String category, LocalDateTime dateTime) {
         this.name = name;
