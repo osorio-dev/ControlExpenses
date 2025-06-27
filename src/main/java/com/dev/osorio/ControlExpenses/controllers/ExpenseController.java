@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/expense")
@@ -47,9 +48,11 @@ public class ExpenseController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteExpenseById(@PathVariable("id") Long id) {
-        expenseService.deleteExpenseById(id);
+    public ResponseEntity<String> deleteExpenseById(@PathVariable("id") Long id) {
+        ExpenseModel expenseModel = expenseService.getExpenseById(id);
 
-        return "Despesa Deletada com Sucesso!!";
+        expenseService.deleteExpenseById(expenseModel.getId());
+
+        return ResponseEntity.ok("Despesa Deletada com Sucesso!!");
     }
 }
