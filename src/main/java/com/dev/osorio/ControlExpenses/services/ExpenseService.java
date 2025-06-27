@@ -1,6 +1,7 @@
 package com.dev.osorio.ControlExpenses.services;
 
 import com.dev.osorio.ControlExpenses.entitys.ExpenseModel;
+import com.dev.osorio.ControlExpenses.exceptions.EventNotFoundException;
 import com.dev.osorio.ControlExpenses.repositorys.ExpenseRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +25,7 @@ public class ExpenseService {
     //Get Expense per ID
     public ExpenseModel getExpenseById(Long id) {
         Optional<ExpenseModel> expenseModel = expenseRepository.findById(id);
-
-        return expenseModel.orElse(null);
+        return expenseModel.orElseThrow(EventNotFoundException::new);
     }
 
     //Get Filter Expense DateTime
