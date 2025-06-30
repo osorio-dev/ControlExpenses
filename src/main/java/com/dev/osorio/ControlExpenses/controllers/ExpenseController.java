@@ -27,11 +27,6 @@ public class ExpenseController {
     @GetMapping("/{id}")
     public ResponseEntity<ExpenseModel> getExpenseById(@PathVariable("id") Long id) {
         ExpenseModel expenseModel = expenseService.getExpenseById(id);
-
-        if (expenseModel == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
         return ResponseEntity.ok(expenseModel);
     }
 
@@ -49,10 +44,7 @@ public class ExpenseController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteExpenseById(@PathVariable("id") Long id) {
-        ExpenseModel expenseModel = expenseService.getExpenseById(id);
-
-        expenseService.deleteExpenseById(expenseModel.getId());
-
+        expenseService.deleteExpenseById(id);
         return ResponseEntity.ok("Despesa Deletada com Sucesso!!");
     }
 }
