@@ -1,7 +1,7 @@
 package com.dev.osorio.ControlExpenses.services;
 
 import com.dev.osorio.ControlExpenses.entitys.ExpenseModel;
-import com.dev.osorio.ControlExpenses.exceptions.EventNotFoundException;
+import com.dev.osorio.ControlExpenses.exceptions.NotFoundException;
 import com.dev.osorio.ControlExpenses.repositorys.ExpenseRepository;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,12 @@ public class ExpenseService {
     //Get Expense per ID
     public ExpenseModel getExpenseById(Long id) {
         Optional<ExpenseModel> expenseModel = expenseRepository.findById(id);
-        return expenseModel.orElseThrow(EventNotFoundException::new);
+
+        if (expenseModel.isEmpty()) {
+            throw new NotFoundException("Despesa não Existe nos Registros!!");
+        }
+
+        return expenseModel.get();
     }
 
     //Get Filter Expense DateTime
@@ -43,8 +48,10 @@ public class ExpenseService {
     public void deleteExpenseById(Long id) {
         Optional<ExpenseModel> expenseModel = expenseRepository.findById(id);
 
-        expenseModel.ifPresent(expense -> {
-            expenseRepository.deleteById(id);
-        });
+        if (expenseModel.isEmpty()) {
+            throw new NotFoundException("Erro ao Deletar. A Despesa não Existe nos Registros!!");
+        }
+
+        expenseRepository.deleteById(expenseModel.get().getId());
     }
 }
