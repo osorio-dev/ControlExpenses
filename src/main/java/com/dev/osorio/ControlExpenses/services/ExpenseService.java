@@ -5,6 +5,8 @@ import com.dev.osorio.ControlExpenses.exceptions.NotFoundException;
 import com.dev.osorio.ControlExpenses.repositorys.ExpenseRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,21 +24,22 @@ public class ExpenseService {
         return expenseRepository.findAll();
     }
 
-    //Get Expense per ID
-    public ExpenseModel getExpenseById(Long id) {
-        Optional<ExpenseModel> expenseModel = expenseRepository.findById(id);
-
-        if (expenseModel.isEmpty()) {
-            throw new NotFoundException("Despesa não Existe nos Registros!!");
-        }
-
-        return expenseModel.get();
+    //Get Expense per Name
+    public List<ExpenseModel> getExpenseByName(String name) {
+        return expenseRepository.findByName(name);
     }
 
-    //Get Filter Expense DateTime
-    public List<ExpenseModel> getAllExpensesByDateTime(int month) {
+    //Get Expense per Category
+    public List<ExpenseModel> getExpenseByCategory(String category) {
+        return expenseRepository.findByCategory(category);
+    }
 
-        return expenseRepository.findByDate(month);
+    //Get Filter Expense date
+    public List<ExpenseModel> getExpenseByLocalDate(LocalDate localDate) {
+        LocalDateTime startDay = localDate.atStartOfDay();
+        LocalDateTime startDayTomorrow = localDate.plusDays(1).atStartOfDay();
+
+        return expenseRepository.findByDate(startDay, startDayTomorrow);
     }
 
     //Post Save Expense
