@@ -2,12 +2,11 @@ package com.dev.osorio.ControlExpenses.controllers;
 
 import com.dev.osorio.ControlExpenses.entitys.ExpenseModel;
 import com.dev.osorio.ControlExpenses.services.ExpenseService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/expense")
@@ -19,22 +18,28 @@ public class ExpenseController {
         this.expenseService = expenseService;
     }
 
-    @GetMapping("/allexpenses")
+    @GetMapping()
     public ResponseEntity<List<ExpenseModel>> getAllExpenses() {
         return ResponseEntity.ok(expenseService.getAllExpenses());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ExpenseModel> getExpenseById(@PathVariable("id") Long id) {
-        ExpenseModel expenseModel = expenseService.getExpenseById(id);
-        return ResponseEntity.ok(expenseModel);
+    @GetMapping("/name")
+    public ResponseEntity<List<ExpenseModel>> getExpenseByName(@RequestParam(value = "name") String name) {
+        List<ExpenseModel> expenseModelList = expenseService.getExpenseByName(name);
+        return ResponseEntity.ok(expenseModelList);
+    }
+
+    @GetMapping("/category")
+    public ResponseEntity<List<ExpenseModel>> getExpenseByCategory(@RequestParam(value = "category") String category) {
+        List<ExpenseModel> expenseModelList = expenseService.getExpenseByCategory(category);
+        return ResponseEntity.ok(expenseModelList);
     }
 
     @GetMapping("/date")
-    public List<ExpenseModel> getExpensesByDateTime(@RequestParam("month") int month) {
-        List<ExpenseModel> expenseModelList = expenseService.getAllExpensesByDateTime(month);
-
-        return expenseModelList;
+    public ResponseEntity<List<ExpenseModel>> getExpensesByLocalDate(@RequestParam("date") String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        List<ExpenseModel> expenseModelList = expenseService.getExpenseByLocalDate(localDate);
+        return ResponseEntity.ok(expenseModelList);
     }
 
     @PostMapping("/create")
