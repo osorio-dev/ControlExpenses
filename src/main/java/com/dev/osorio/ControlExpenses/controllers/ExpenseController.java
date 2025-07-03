@@ -36,11 +36,19 @@ public class ExpenseController {
     }
 
     @GetMapping("/date")
-    public ResponseEntity<List<ExpenseModel>> getExpensesByLocalDate(@RequestParam("date") String date) {
+    public ResponseEntity<List<ExpenseModel>> getExpensesByDay(@RequestParam("date") String date) {
         LocalDate localDate = LocalDate.parse(date);
-        List<ExpenseModel> expenseModelList = expenseService.getExpenseByLocalDate(localDate);
+        List<ExpenseModel> expenseModelList = expenseService.getExpenseByDay(localDate);
         return ResponseEntity.ok(expenseModelList);
     }
+
+    @GetMapping("/date/month")
+    public ResponseEntity<List<ExpenseModel>> getExpensesByMonth(@RequestParam("date") String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        List<ExpenseModel> expenseModelList = expenseService.getExpenseByMonth(localDate);
+        return ResponseEntity.ok(expenseModelList);
+    }
+
 
     @PostMapping("/create")
     public ResponseEntity<ExpenseModel> saveExpense(@RequestBody ExpenseModel expenseModel) {
