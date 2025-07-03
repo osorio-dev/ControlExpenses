@@ -18,8 +18,11 @@ public interface ExpenseRepository extends JpaRepository<ExpenseModel, Long> {
     List<ExpenseModel> findByCategory(String category);
 
     @Query("SELECT e FROM ExpenseModel e WHERE e.dateTime >= :startDay AND e.dateTime < :startDayTomorrow")
-    List<ExpenseModel> findByDate(
+    List<ExpenseModel> findExpensesByDay(
             @Param("startDay") LocalDateTime startDay,
             @Param("startDayTomorrow") LocalDateTime startDayTomorrow
     );
+
+    @Query("SELECT e FROM ExpenseModel e WHERE EXTRACT(MONTH FROM e.dateTime) = :month AND EXTRACT(YEAR FROM e.dateTime) = :year")
+    List<ExpenseModel> findExpensesByMonth(@Param("year") Integer year, @Param("month") Integer month);
 }
