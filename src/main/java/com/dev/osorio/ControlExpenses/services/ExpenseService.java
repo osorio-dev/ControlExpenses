@@ -34,12 +34,19 @@ public class ExpenseService {
         return expenseRepository.findByCategory(category);
     }
 
-    //Get Filter Expense date
-    public List<ExpenseModel> getExpenseByLocalDate(LocalDate localDate) {
+    //Get Filter Expense date day
+    public List<ExpenseModel> getExpenseByDay(LocalDate localDate) {
         LocalDateTime startDay = localDate.atStartOfDay();
         LocalDateTime startDayTomorrow = localDate.plusDays(1).atStartOfDay();
 
-        return expenseRepository.findByDate(startDay, startDayTomorrow);
+        return expenseRepository.findExpensesByDay(startDay, startDayTomorrow);
+    }
+
+    //Get Filter Expense month
+    public List<ExpenseModel> getExpenseByMonth(LocalDate localDate) {
+        Integer year = localDate.getYear();
+        Integer monthValue = localDate.getMonthValue();
+        return expenseRepository.findExpensesByMonth(year, monthValue);
     }
 
     //Post Save Expense
