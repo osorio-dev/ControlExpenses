@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class ExpenseService {
         return expenseRepository.findByCategory(category);
     }
 
-    //Get Filter Expense date day
+    //Get Expense date day
     public List<ExpenseModel> getExpenseByDay(LocalDate localDate) {
         LocalDateTime startDay = localDate.atStartOfDay();
         LocalDateTime startDayTomorrow = localDate.plusDays(1).atStartOfDay();
@@ -42,11 +43,16 @@ public class ExpenseService {
         return expenseRepository.findExpensesByDay(startDay, startDayTomorrow);
     }
 
-    //Get Filter Expense month
-    public List<ExpenseModel> getExpenseByMonth(LocalDate localDate) {
+    //Get Expense actually month
+    public List<ExpenseModel> getExpenseByDateNow(LocalDate localDate) {
         Integer year = localDate.getYear();
         Integer monthValue = localDate.getMonthValue();
         return expenseRepository.findExpensesByMonth(year, monthValue);
+    }
+
+    //Get Expenses month user selected
+    public List<ExpenseModel> getExpenseBySelectedMonth(Integer month) {
+        return expenseRepository.findExpensesByMonth(LocalDate.now().getYear(), month);
     }
 
     //Post Save Expense
