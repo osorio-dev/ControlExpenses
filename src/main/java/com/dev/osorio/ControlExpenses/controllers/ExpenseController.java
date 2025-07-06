@@ -18,7 +18,7 @@ public class ExpenseController {
         this.expenseService = expenseService;
     }
 
-    @GetMapping()
+    @GetMapping("/allexpenses")
     public ResponseEntity<List<ExpenseModel>> getAllExpenses() {
         return ResponseEntity.ok(expenseService.getAllExpenses());
     }
@@ -35,20 +35,15 @@ public class ExpenseController {
         return ResponseEntity.ok(expenseModelList);
     }
 
-    @GetMapping("/date")
-    public ResponseEntity<List<ExpenseModel>> getExpensesByDay(@RequestParam("date") String date) {
-        LocalDate localDate = LocalDate.parse(date);
-        List<ExpenseModel> expenseModelList = expenseService.getExpenseByDay(localDate);
-        return ResponseEntity.ok(expenseModelList);
+    @GetMapping()
+    public ResponseEntity<List<ExpenseModel>> getExpensesByDate(){
+        return ResponseEntity.ok(expenseService.getExpenseByDateNow(LocalDate.now()));
     }
 
     @GetMapping("/date/month")
-    public ResponseEntity<List<ExpenseModel>> getExpensesByMonth(@RequestParam("date") String date) {
-        LocalDate localDate = LocalDate.parse(date);
-        List<ExpenseModel> expenseModelList = expenseService.getExpenseByMonth(localDate);
-        return ResponseEntity.ok(expenseModelList);
+    public ResponseEntity<List<ExpenseModel>> getExpenseByDateNow(@RequestParam("month") Integer month){
+        return ResponseEntity.ok(expenseService.getExpenseByDateNow(LocalDate.now().withMonth(month)));
     }
-
 
     @PostMapping("/create")
     public ResponseEntity<ExpenseModel> saveExpense(@RequestBody ExpenseModel expenseModel) {
