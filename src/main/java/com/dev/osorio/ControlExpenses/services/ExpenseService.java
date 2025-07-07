@@ -27,12 +27,14 @@ public class ExpenseService {
 
     //Get Expense per Name
     public List<ExpenseModel> getExpenseByName(String name) {
-        return expenseRepository.findByName(name);
+        List<ExpenseModel> expenseModelList = expenseRepository.findByName(name);
+        return expenseModelList.stream().sorted().toList();
     }
 
     //Get Expense per Category
     public List<ExpenseModel> getExpenseByCategory(String category) {
-        return expenseRepository.findByCategory(category);
+        List<ExpenseModel> expenseModelList = expenseRepository.findByCategory(category);
+        return expenseModelList.stream().sorted(Comparator.comparing(ExpenseModel::getName)).toList();
     }
 
     //Get Expense date day
@@ -44,15 +46,20 @@ public class ExpenseService {
     }
 
     //Get Expense actually month
-    public List<ExpenseModel> getExpenseByDateNow(LocalDate localDate) {
-        Integer year = localDate.getYear();
-        Integer monthValue = localDate.getMonthValue();
-        return expenseRepository.findExpensesByMonth(year, monthValue);
-    }
+    public List<ExpenseModel> getExpenseByMonth(String date) {
 
-    //Get Expenses month user selected
-    public List<ExpenseModel> getExpenseBySelectedMonth(Integer month) {
-        return expenseRepository.findExpensesByMonth(LocalDate.now().getYear(), month);
+        try {
+            LocalDate localDate = LocalDate.parse(date);
+            Integer year = localDate.getYear();
+            Integer monthValue = localDate.getMonthValue();
+
+            List<ExpenseModel> expenseModelList = expenseRepository.findExpensesByMonth(year, monthValue);
+
+            return expenseModelList.stream().sorted(Comparator.comparing(ExpenseModel::getDateTime).reversed()).toList();
+        } catch (Exception e) {
+            throw new NotFoundException("Erro, Data Invalida!!");
+        }
+
     }
 
     //Post Save Expense
