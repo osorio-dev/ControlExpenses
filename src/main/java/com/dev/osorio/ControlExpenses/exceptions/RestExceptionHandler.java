@@ -14,4 +14,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(notFoundException.getMessage());
     }
+
+    @ExceptionHandler(InvalidInputException.class)
+    private ResponseEntity<String> invalidInput(InvalidInputException invalidInputException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(invalidInputException.getMessage());
+    }
 }
