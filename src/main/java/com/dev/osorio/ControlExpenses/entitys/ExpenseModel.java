@@ -1,6 +1,5 @@
 package com.dev.osorio.ControlExpenses.entitys;
 
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
