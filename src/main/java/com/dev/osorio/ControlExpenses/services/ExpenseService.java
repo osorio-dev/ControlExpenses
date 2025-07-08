@@ -1,7 +1,10 @@
 package com.dev.osorio.ControlExpenses.services;
 
+import com.dev.osorio.ControlExpenses.dtos.ExpenseDTO;
 import com.dev.osorio.ControlExpenses.entitys.ExpenseModel;
+import com.dev.osorio.ControlExpenses.exceptions.InvalidInputException;
 import com.dev.osorio.ControlExpenses.exceptions.NotFoundException;
+import com.dev.osorio.ControlExpenses.mappers.ExpenseMapper;
 import com.dev.osorio.ControlExpenses.repositorys.ExpenseRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,56 +18,72 @@ import java.util.Optional;
 public class ExpenseService {
 
     private final ExpenseRepository expenseRepository;
+    private final ExpenseMapper expenseMapper;
 
-    public ExpenseService(ExpenseRepository expenseRepository) {
+    public ExpenseService(ExpenseRepository expenseRepository, ExpenseMapper expenseMapper) {
         this.expenseRepository = expenseRepository;
+        this.expenseMapper = expenseMapper;
     }
 
     //Get All Expenses
-    public List<ExpenseModel> getAllExpenses() {
-        return expenseRepository.findAll();
+    public List<ExpenseDTO> getAllExpenses() {
+        return expenseRepository.findAll().stream()
+                .map(expenseMapper::toExpenseDTO)
+                .toList();
     }
 
     //Get Expense per Name
-    public List<ExpenseModel> getExpenseByName(String name) {
+    public List<ExpenseDTO> getExpenseByName(String name) {
         List<ExpenseModel> expenseModelList = expenseRepository.findByName(name);
-        return expenseModelList.stream().sorted().toList();
+        return expenseModelList.stream()
+                .map(expenseMapper::toExpenseDTO)
+                .sorted()
+                .toList();
     }
 
     //Get Expense per Category
-    public List<ExpenseModel> getExpenseByCategory(String category) {
+    public List<ExpenseDTO> getExpenseByCategory(String category) {
         List<ExpenseModel> expenseModelList = expenseRepository.findByCategory(category);
-        return expenseModelList.stream().sorted(Comparator.comparing(ExpenseModel::getName)).toList();
+        return expenseModelList.stream()
+                .map(expenseMapper::toExpenseDTO)
+                .sorted(Comparator.comparing(ExpenseDTO::name))
+                .toList();
     }
 
     //Get Expense date day
-    public List<ExpenseModel> getExpenseByDay(LocalDate localDate) {
+    public List<ExpenseDTO> getExpenseByDay(String date) {
+        LocalDate localDate = dateValidate(date);
+
         LocalDateTime startDay = localDate.atStartOfDay();
         LocalDateTime startDayTomorrow = localDate.plusDays(1).atStartOfDay();
 
-        return expenseRepository.findExpensesByDay(startDay, startDayTomorrow);
+        List<ExpenseModel> expenseModelList = expenseRepository.findExpensesByDay(startDay, startDayTomorrow);
+
+        return expenseModelList.stream()
+                .map(expenseMapper::toExpenseDTO)
+                .sorted(Comparator.comparing(ExpenseDTO::dateTime).reversed())
+                .toList();
     }
 
     //Get Expense actually month
-    public List<ExpenseModel> getExpenseByMonth(String date) {
+    public List<ExpenseDTO> getExpenseByMonth(String date) {
+        LocalDate localDate = dateValidate(date);
 
-        try {
-            LocalDate localDate = LocalDate.parse(date);
-            Integer year = localDate.getYear();
-            Integer monthValue = localDate.getMonthValue();
+        Integer year = localDate.getYear();
+        Integer monthValue = localDate.getMonthValue();
 
-            List<ExpenseModel> expenseModelList = expenseRepository.findExpensesByMonth(year, monthValue);
+        List<ExpenseModel> expenseModelList = expenseRepository.findExpensesByMonth(year, monthValue);
 
-            return expenseModelList.stream().sorted(Comparator.comparing(ExpenseModel::getDateTime).reversed()).toList();
-        } catch (Exception e) {
-            throw new NotFoundException("Erro, Data Invalida!!");
-        }
-
+        return expenseModelList.stream()
+                .map(expenseMapper::toExpenseDTO)
+                .sorted(Comparator.comparing(ExpenseDTO::dateTime).reversed())
+                .toList();
     }
 
     //Post Save Expense
-    public ExpenseModel saveExpense(ExpenseModel expenseModel) {
-        return expenseRepository.saveAndFlush(expenseModel);
+    public ExpenseDTO saveExpense(ExpenseDTO expenseDTO) {
+        ExpenseModel expenseModel = expenseMapper.toExpenseModel(expenseDTO);
+        return expenseMapper.toExpenseDTO(expenseRepository.saveAndFlush(expenseModel));
     }
 
     //Delete Expense
@@ -76,5 +95,13 @@ public class ExpenseService {
         }
 
         expenseRepository.deleteById(expenseModel.get().getId());
+    }
+
+    private LocalDate dateValidate(String date) {
+        try {
+            return LocalDate.parse(date);
+        } catch (Exception e) {
+            throw new InvalidInputException("Erro, Data Invalida!!");
+        }
     }
 }
