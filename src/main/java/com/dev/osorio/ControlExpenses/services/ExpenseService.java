@@ -2,7 +2,7 @@ package com.dev.osorio.ControlExpenses.services;
 
 import com.dev.osorio.ControlExpenses.dtos.ExpenseDTO;
 import com.dev.osorio.ControlExpenses.entitys.ExpenseModel;
-import com.dev.osorio.ControlExpenses.exceptions.InvalidInputException;
+import com.dev.osorio.ControlExpenses.exceptions.InvalidRequestException;
 import com.dev.osorio.ControlExpenses.exceptions.NotFoundException;
 import com.dev.osorio.ControlExpenses.mappers.ExpenseMapper;
 import com.dev.osorio.ControlExpenses.repositorys.ExpenseRepository;
@@ -30,6 +30,17 @@ public class ExpenseService {
         return expenseRepository.findAll().stream()
                 .map(expenseMapper::toExpenseDTO)
                 .toList();
+    }
+
+    //Get Expense ID
+    public ExpenseDTO getExpenseById(Long id) {
+        Optional<ExpenseModel> expenseModel = expenseRepository.findById(id);
+
+        if (expenseModel.isEmpty()) {
+            throw new NotFoundException("Despesa não Encontrada !!!");
+        }
+
+        return expenseMapper.toExpenseDTO(expenseModel.get());
     }
 
     //Get Expense per Name
@@ -82,8 +93,25 @@ public class ExpenseService {
 
     //Post Save Expense
     public ExpenseDTO saveExpense(ExpenseDTO expenseDTO) {
-        ExpenseModel expenseModel = expenseMapper.toExpenseModel(expenseDTO);
-        return expenseMapper.toExpenseDTO(expenseRepository.saveAndFlush(expenseModel));
+        try {
+            ExpenseModel expenseModel = expenseMapper.toExpenseModel(expenseDTO);
+            return expenseMapper.toExpenseDTO(expenseRepository.saveAndFlush(expenseModel));
+        } catch (Exception e) {
+            throw new InvalidRequestException("Dados incompletos e/ou Invalidos!!");
+        }
+    }
+
+    //Put - Update Expense
+    public ExpenseDTO updateExpense(Long id, ExpenseDTO expenseDTO) {
+        Optional<ExpenseModel> expenseModel = expenseRepository.findById(id);
+
+        if (expenseModel.isEmpty()) {
+            throw new NotFoundException("Erro ao Atualizar. A Despesa não Existe nos Registros!!");
+        }
+
+        ExpenseDTO expense = expenseMapper.updateExpense(id, expenseDTO, expenseModel.get());
+
+        return saveExpense(expense);
     }
 
     //Delete Expense
@@ -101,7 +129,7 @@ public class ExpenseService {
         try {
             return LocalDate.parse(date);
         } catch (Exception e) {
-            throw new InvalidInputException("Erro, Data Invalida!!");
+            throw new InvalidRequestException("Erro, Data Invalida!!");
         }
     }
 }
