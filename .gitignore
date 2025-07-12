@@ -34,3 +34,4 @@ build/
 
 ### Variaveis de Ambiente ###
 .env
+./target
