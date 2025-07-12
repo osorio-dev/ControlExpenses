@@ -29,4 +29,15 @@ public class ExpenseMapper {
                 expenseModel.getDateTime()
         );
     }
+
+    public ExpenseDTO updateExpense(Long id, ExpenseDTO expenseDTO, ExpenseModel expenseModel) {
+
+        expenseModel.setId(id);
+        expenseModel.setName((expenseDTO.name() == null) ? expenseModel.getName() : expenseDTO.name());
+        expenseModel.setCategory((expenseDTO.category() == null) ? expenseModel.getCategory() : expenseDTO.category());
+        expenseModel.setValue((expenseDTO.value() == null) ? expenseModel.getValue() : expenseDTO.value());
+        expenseModel.setDateTime((expenseDTO.dateTime() == null) ? expenseModel.getDateTime() : expenseDTO.dateTime());
+
+        return toExpenseDTO(expenseModel);
+    }
 }
