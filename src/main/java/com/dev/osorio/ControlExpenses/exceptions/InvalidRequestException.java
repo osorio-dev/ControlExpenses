@@ -1,8 +1,8 @@
 package com.dev.osorio.ControlExpenses.exceptions;
 
-public class InvalidInputException extends RuntimeException {
+public class InvalidRequestException extends RuntimeException {
 
-    public InvalidInputException(String message) {
+    public InvalidRequestException(String message) {
         super(message);
     }
 }
