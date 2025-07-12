@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/expense")
+@RequestMapping("/api/expense")
 @Tag(name = "Expense Management", description = "APIs for managing user expenses")
 public class ExpenseController {
 
@@ -39,8 +39,8 @@ public class ExpenseController {
             content = @Content(schema = @Schema(implementation = ExpenseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Expense Not Found")
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<ExpenseDTO> getExpenseById(@PathVariable("id") Long id) {
+    @GetMapping("/selectedid")
+    public ResponseEntity<ExpenseDTO> getExpenseById(@RequestParam("id") Long id) {
         return ResponseEntity.ok(expenseService.getExpenseById(id));
     }
 
@@ -72,7 +72,7 @@ public class ExpenseController {
             @ApiResponse(responseCode = "200", description = "Expenses Found"),
             @ApiResponse(responseCode = "400", description = "Invalid request date")
     })
-    @GetMapping()
+    @GetMapping("/month")
     public ResponseEntity<List<ExpenseDTO>> getExpensesByMonth(
             @RequestParam(value = "date", required = false) String date
     ){
