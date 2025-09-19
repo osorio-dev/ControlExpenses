@@ -7,6 +7,7 @@ import com.dev.osorio.ControlExpenses.exceptions.NotFoundException;
 import com.dev.osorio.ControlExpenses.mappers.ExpenseMapper;
 import com.dev.osorio.ControlExpenses.repositorys.ExpenseRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -92,6 +93,7 @@ public class ExpenseService {
     }
 
     //Post Save Expense
+    @Transactional
     public ExpenseDTO saveExpense(ExpenseDTO expenseDTO) {
         try {
             ExpenseModel expenseModel = expenseMapper.toExpenseModel(expenseDTO);
@@ -102,6 +104,7 @@ public class ExpenseService {
     }
 
     //Put - Update Expense
+    @Transactional
     public ExpenseDTO updateExpense(Long id, ExpenseDTO expenseDTO) {
         Optional<ExpenseModel> expenseModel = expenseRepository.findById(id);
 
@@ -115,6 +118,7 @@ public class ExpenseService {
     }
 
     //Delete Expense
+    @Transactional
     public void deleteExpenseById(Long id) {
         Optional<ExpenseModel> expenseModel = expenseRepository.findById(id);
 

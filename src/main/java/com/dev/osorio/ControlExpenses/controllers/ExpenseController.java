@@ -28,7 +28,7 @@ public class ExpenseController {
 
     @Operation(summary = "Get All Expenses", description = "Get all the data from the database")
     @ApiResponse(responseCode = "200", description = "Successfully")
-    @GetMapping("/allexpenses")
+    @GetMapping()
     public ResponseEntity<List<ExpenseDTO>> getAllExpenses() {
         return ResponseEntity.ok(expenseService.getAllExpenses());
     }
@@ -39,8 +39,8 @@ public class ExpenseController {
             content = @Content(schema = @Schema(implementation = ExpenseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Expense Not Found")
     })
-    @GetMapping("/selectedid")
-    public ResponseEntity<ExpenseDTO> getExpenseById(@RequestParam("id") Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<ExpenseDTO> getExpenseById(@PathVariable Long id) {
         return ResponseEntity.ok(expenseService.getExpenseById(id));
     }
 
@@ -51,7 +51,7 @@ public class ExpenseController {
             @ApiResponse(responseCode = "404", description = "Expense Not Found")
     })
     @GetMapping("/name")
-    public ResponseEntity<List<ExpenseDTO>> getExpenseByName(@RequestParam(value = "name") String name) {
+    public ResponseEntity<List<ExpenseDTO>> getExpenseByName(@PathVariable String name) {
         return ResponseEntity.ok(expenseService.getExpenseByName(name));
     }
 
@@ -62,7 +62,7 @@ public class ExpenseController {
             @ApiResponse(responseCode = "404", description = "Expense Not Found")
     })
     @GetMapping("/category")
-    public ResponseEntity<List<ExpenseDTO>> getExpenseByCategory(@RequestParam(value = "category") String category) {
+    public ResponseEntity<List<ExpenseDTO>> getExpenseByCategory(@PathVariable String category) {
         return ResponseEntity.ok(expenseService.getExpenseByCategory(category));
     }
 
@@ -74,7 +74,7 @@ public class ExpenseController {
     })
     @GetMapping("/month")
     public ResponseEntity<List<ExpenseDTO>> getExpensesByMonth(
-            @RequestParam(value = "date", required = false) String date
+            @PathVariable(required = false) String date
     ){
         return ResponseEntity.ok(
                 expenseService.getExpenseByMonth((date != null) ? date : LocalDate.now().toString())
@@ -88,7 +88,7 @@ public class ExpenseController {
             @ApiResponse(responseCode = "400", description = "Invalid request day")
     })
     @GetMapping("/day")
-    public ResponseEntity<List<ExpenseDTO>> getExpenseByDay(@RequestParam("date") String date){
+    public ResponseEntity<List<ExpenseDTO>> getExpenseByDay(@PathVariable String date){
         return ResponseEntity.ok(expenseService.getExpenseByDay(date));
     }
 
@@ -99,7 +99,7 @@ public class ExpenseController {
             @ApiResponse(responseCode = "400", description = "Invalid request data",
             content = @Content(schema = @Schema()))
     })
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<ExpenseDTO> saveExpense(@RequestBody ExpenseDTO expenseDTO) {
         return ResponseEntity.ok(expenseService.saveExpense(expenseDTO));
     }
@@ -111,7 +111,7 @@ public class ExpenseController {
             @ApiResponse(responseCode = "404", description = "Expense not found",
             content = @Content(schema = @Schema()))
     })
-    @PutMapping("/update")
+    @PutMapping()
     public ResponseEntity<String> updateExpense(@RequestParam("id") Long id, @RequestBody ExpenseDTO expenseDTO) {
         ExpenseDTO expense = expenseService.updateExpense(id, expenseDTO);
         return ResponseEntity.status(HttpStatus.OK)
@@ -123,7 +123,7 @@ public class ExpenseController {
             @ApiResponse(responseCode = "200", description = "Expense delete successfully"),
             @ApiResponse(responseCode = "404", description = "Expense not found")
     })
-    @DeleteMapping("/delete")
+    @DeleteMapping()
     public ResponseEntity<String> deleteExpenseById(@RequestParam("id") Long id) {
         expenseService.deleteExpenseById(id);
         return ResponseEntity.ok("Despesa Deletada com Sucesso!!");
